@@ -1,0 +1,263 @@
+#include"Arduino.h"  
+#include"U8glib.h"
+#define INTERVAL_LCD 100
+#define Pin_X A1
+#define Pin_Y A0
+#define setFont_L u8g.setFont(u8g_font_7x13)
+
+unsigned long lcd_time = millis();
+int x = 55, y = 55;
+int N = 3;
+int score = 0;
+U8GLIB_SSD1306_128X64 u8g(U8G_I2C_OPT_NONE);
+
+struct data {
+  long pos;
+  long speed;
+  long its_y;
+};
+
+
+void dataShell(data* P_p,int &score)
+{
+  for (int i = 0; i < N; i++)
+  {
+    if (P_p[i].its_y >= 63)
+    {
+      P_p[i].pos = random(128);
+      P_p[i].speed = random(3) + 4;
+      P_p[i].its_y = 0;
+      Score(score, N);
+    }
+    P_p[i].its_y += P_p[i].speed;
+  }
+}
+void drawTank(int x, int y) {
+  u8g.drawPixel(x, y);
+  u8g.drawPixel(x, y + 1);
+  u8g.drawPixel(x, y + 2);
+  u8g.drawPixel(x, y + 3);
+  u8g.drawPixel(x, y + 4);
+  u8g.drawPixel(x, y + 5);
+  u8g.drawPixel(x, y + 6);
+  u8g.drawPixel(x, y + 7);
+  u8g.drawPixel(x, y + 8);
+
+  //u8g.drawPixel(x+1, y);
+  //u8g.drawPixel(x+1, y+1);
+  u8g.drawPixel(x + 1, y + 2);
+  u8g.drawPixel(x + 1, y + 3);
+  u8g.drawPixel(x + 1, y + 4);
+  u8g.drawPixel(x + 1, y + 5);
+  u8g.drawPixel(x + 1, y + 6);
+  u8g.drawPixel(x + 1, y + 7);
+  //u8g.drawPixel(x+1, y+8);
+
+  //u8g.drawPixel(x+2, y);
+  //u8g.drawPixel(x+2, y+1);
+  //u8g.drawPixel(x+2, y+2);
+  u8g.drawPixel(x + 2, y + 3);
+  u8g.drawPixel(x + 2, y + 4);
+  u8g.drawPixel(x + 2, y + 5);
+  u8g.drawPixel(x + 2, y + 6);
+  //u8g.drawPixel(x+2, y+7);
+  //u8g.drawPixel(x+2, y+8);
+
+  //u8g.drawPixel(x+3, y);
+  u8g.drawPixel(x + 3, y + 1);
+  u8g.drawPixel(x + 3, y + 2);
+  u8g.drawPixel(x + 3, y + 3);
+  u8g.drawPixel(x + 3, y + 4);
+  u8g.drawPixel(x + 3, y + 5);
+  u8g.drawPixel(x + 3, y + 6);
+  //u8g.drawPixel(x+3, y+7);
+  //u8g.drawPixel(x+3, y+8);
+
+  u8g.drawPixel(x + 4, y);
+  u8g.drawPixel(x + 4, y + 1);
+  u8g.drawPixel(x + 4, y + 2);
+  u8g.drawPixel(x + 4, y + 3);
+  u8g.drawPixel(x + 4, y + 4);
+  u8g.drawPixel(x + 4, y + 5);
+  u8g.drawPixel(x + 4, y + 6);
+  //u8g.drawPixel(x+4, y+7);
+  //u8g.drawPixel(x+4, y+8);
+
+  //u8g.drawPixel(x+5, y);
+  u8g.drawPixel(x + 5, y + 1);
+  u8g.drawPixel(x + 5, y + 2);
+  u8g.drawPixel(x + 5, y + 3);
+  u8g.drawPixel(x + 5, y + 4);
+  u8g.drawPixel(x + 5, y + 5);
+  u8g.drawPixel(x + 5, y + 6);
+  //u8g.drawPixel(x+5, y + 7);
+  //u8g.drawPixel(x+5, y + 8);
+
+  //u8g.drawPixel(x+6,y);
+  //u8g.drawPixel(x+6, y + 1);
+  //u8g.drawPixel(x+6, y + 2);
+  u8g.drawPixel(x + 6, y + 3);
+  u8g.drawPixel(x + 6, y + 4);
+  u8g.drawPixel(x + 6, y + 5);
+  u8g.drawPixel(x + 6, y + 6);
+  //u8g.drawPixel(x+6, y + 7);
+  //u8g.drawPixel(x+6, y + 8);
+
+  //u8g.drawPixel(x+7,y);
+  //u8g.drawPixel(x+7, y + 1);
+  u8g.drawPixel(x + 7, y + 2);
+  u8g.drawPixel(x + 7, y + 3);
+  u8g.drawPixel(x + 7, y + 4);
+  u8g.drawPixel(x + 7, y + 5);
+  u8g.drawPixel(x + 7, y + 6);
+  u8g.drawPixel(x + 7, y + 7);
+  //u8g.drawPixel(x+7, y + 8);
+
+  u8g.drawPixel(x + 8, y);
+  u8g.drawPixel(x + 8, y + 1);
+  u8g.drawPixel(x + 8, y + 2);
+  u8g.drawPixel(x + 8, y + 3);
+  u8g.drawPixel(x + 8, y + 4);
+  u8g.drawPixel(x + 8, y + 5);
+  u8g.drawPixel(x + 8, y + 6);
+  u8g.drawPixel(x + 8, y + 7);
+  u8g.drawPixel(x + 8, y + 8);
+}
+void drawShell(data*P_p)
+{
+  for(int i=0;i<N;i++)
+    u8g.drawPixel(P_p[i].pos, P_p[i].its_y);
+}
+void print(int score) {
+  setFont_L;
+  u8g.setPrintPos(30, 30);
+  u8g.print("Score:");
+  u8g.print(score);
+}
+void direction(int& x)
+{
+  switch (uiStep()) {
+  case(0):
+    if (x <= 0)
+      break;
+    else
+    {
+      x -= 2;
+      break;
+    }
+  case(1):
+    if (x >= 127)
+      break;
+    else
+    {
+      x += 2;
+      break;
+    }
+  }
+}
+void attack_move(data*P_p, int &x, int y, int N, int &score) {
+  int time = 0;
+  for (int i = 0; i < N; i++)
+  {
+    if ((P_p[i].pos <= x + 8) &&
+      (P_p[i].pos >= x) &&
+      (P_p[i].its_y >= 55))
+    {
+      time++;
+    }
+  }
+  if (time != 0)
+  {
+    do {
+      print(score);
+    } while (u8g.nextPage());
+    delay(6666);
+    startOver(P_p, x, score);
+  }
+  else
+  {
+    dataShell(P_p,score);
+    direction(x);
+    do {
+      drawTank(x, y);
+      drawShell(P_p);
+    } while (u8g.nextPage());
+  }
+}
+void startOver(data* P_p, int &x, int &score)
+{
+  for (int i = 0; i < N; i++)
+    P_p[i].its_y = 63;
+  x = 55;
+  score = 0;
+}
+int uiStep()
+{
+  Serial.println(analogRead(Pin_Y));
+  if (analogRead(Pin_Y) > 800)
+  {
+    if (analogRead(Pin_Y) < 900)  //X-Right
+      return 1;
+  }
+  if (analogRead(Pin_Y) > 400)    //X-Left
+  {
+    if (analogRead(Pin_Y) < 600)
+      return 0;
+  }
+  return 10;
+}
+void Score(int &score, int &N)
+{
+  score++;
+  if (score <= 20)
+    N = 2;
+  else if ((score > 20)&&
+           (score < 70))
+    N = 3;
+  else if ((score >= 70)
+    && (score < 150))
+    N = 4;
+  else if ((score >= 150)
+    && (score < 250))
+    N = 5;
+  else if (score >= 250)
+    N = 6;
+}
+
+void setup() {
+  struct data {
+    long speed = 0;
+    long pos;
+    int its_y;
+  };
+  Serial.begin(9600);
+  static unsigned char bitmap[] U8G_PROGMEM = {
+    0xff, 0xff, 0xff, 0xff, 0x3f,   0xff, 0xff, 0xff, 0xff, 0x3f,   0xe0, 0xe0, 0xff, 0xff, 0x3f,
+    0xe3, 0xe1, 0xff, 0xff, 0x3f,   0xf3, 0xf1, 0xff, 0xff, 0x3f,   0xf3, 0xf1, 0xfe, 0xbf, 0x37,
+    0xf3, 0x11, 0x1c, 0x1f, 0x30,   0xf3, 0x01, 0x08, 0x8c, 0x20,   0xf3, 0x01, 0x00, 0xc0, 0x39,
+    0xf3, 0x81, 0xc7, 0xc1, 0x39,   0xf3, 0xc1, 0xc7, 0xc9, 0x38,   0xf3, 0xc1, 0xc3, 0x19, 0x3c,
+    0xe3, 0x89, 0x01, 0x98, 0x3f,   0xc7, 0x18, 0x00, 0x08, 0x3e,   0x0f, 0x3c, 0x70, 0x1c, 0x30,
+    0x3f, 0xff, 0xfc, 0x87, 0x31,   0xff, 0xff, 0xbf, 0xc7, 0x23,   0x01, 0x00, 0x00, 0xc6, 0x23,
+    0x03, 0x00, 0x00, 0x0e, 0x30,   0xff, 0xff, 0x3f, 0x1f, 0x3c,   0xff, 0xff, 0x3f, 0xff, 0x3f,
+    0xff, 0xff, 0x3f, 0xff, 0x3f,   0xff, 0xff, 0xff, 0xff, 0x3f,   0xff, 0xff, 0xff, 0xff, 0x3f
+  };
+  u8g.drawXBMP(0, 0, 38, 24, bitmap);
+  delay(1000);
+}
+
+void loop() {
+  static data *P_p = new data[6];
+  static bool flag = true;
+  if (flag)
+  {
+    for (int i = 0; i < N; i++)
+    {
+      P_p[i].its_y = 100;
+      P_p[i].speed = 100;
+      P_p[i].pos = 100;
+    }
+    flag = false;
+  }
+  u8g.firstPage();
+  attack_move(P_p, x, y, N, score);
+}
