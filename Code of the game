@@ -12,17 +12,17 @@ int score = 0;
 U8GLIB_SSD1306_128X64 u8g(U8G_I2C_OPT_NONE);
 
 struct data {
-  long pos;
-  long speed;
-  long its_y;
-};
+  long pos;       //shell初始下落位置
+  long speed;    //shell下落速度，为每刷新一次y轴坐标的变化数值
+  long its_y;    //shell的y轴坐标
+};   //定义一个结构体用于表示shell的属性值
 
 
 void dataShell(data* P_p,int &score)
 {
   for (int i = 0; i < N; i++)
   {
-    if (P_p[i].its_y >= 63)
+    if (P_p[i].its_y >= 63)  //判断shell位置，y轴坐标大于屏幕宽度就初始化
     {
       P_p[i].pos = random(128);
       P_p[i].speed = random(3) + 4;
@@ -32,7 +32,7 @@ void dataShell(data* P_p,int &score)
     P_p[i].its_y += P_p[i].speed;
   }
 }
-void drawTank(int x, int y) {
+void drawTank(int x, int y) {  //描点用于显示tank
   u8g.drawPixel(x, y);
   u8g.drawPixel(x, y + 1);
   u8g.drawPixel(x, y + 2);
@@ -133,8 +133,8 @@ void print(int score) {
   u8g.setPrintPos(30, 30);
   u8g.print("Score:");
   u8g.print(score);
-}
-void direction(int& x)
+}//结束时打印目前分数
+void direction(int& x)//根据摇杆返回值，为tank做出相应的移动
 {
   switch (uiStep()) {
   case(0):
@@ -142,7 +142,7 @@ void direction(int& x)
       break;
     else
     {
-      x -= 2;
+      x -= 2;  //x轴坐标-2
       break;
     }
   case(1):
@@ -150,13 +150,13 @@ void direction(int& x)
       break;
     else
     {
-      x += 2;
+      x += 2; //x轴坐标+2
       break;
     }
   }
 }
 void attack_move(data*P_p, int &x, int y, int N, int &score) {
-  int time = 0;
+  int time = 0;  //添加标记，目前是否有shell[]跟tank的任何一个点重合
   for (int i = 0; i < N; i++)
   {
     if ((P_p[i].pos <= x + 8) &&
@@ -166,15 +166,15 @@ void attack_move(data*P_p, int &x, int y, int N, int &score) {
       time++;
     }
   }
-  if (time != 0)
+  if (time != 0)   //如果time不等于0，表示shell[]击中tank
   {
     do {
       print(score);
     } while (u8g.nextPage());
     delay(6666);
-    startOver(P_p, x, score);
+    startOver(P_p, x, score);  //重新出现
   }
-  else
+  else  //否则刷新shell[3]的属性值
   {
     dataShell(P_p,score);
     direction(x);
@@ -188,10 +188,10 @@ void startOver(data* P_p, int &x, int &score)
 {
   for (int i = 0; i < N; i++)
     P_p[i].its_y = 63;
-  x = 55;
+  x = 55;  //tank恢复初始位置
   score = 0;
 }
-int uiStep()
+int uiStep()  //接收摇杆返回值
 {
   Serial.println(analogRead(Pin_Y));
   if (analogRead(Pin_Y) > 800)
@@ -206,7 +206,7 @@ int uiStep()
   }
   return 10;
 }
-void Score(int &score, int &N)
+void Score(int &score, int &N)  //分数调节难度，分数越高，shell数量越多，N代表shell数量
 {
   score++;
   if (score <= 20)
@@ -240,14 +240,14 @@ void setup() {
     0x3f, 0xff, 0xfc, 0x87, 0x31,   0xff, 0xff, 0xbf, 0xc7, 0x23,   0x01, 0x00, 0x00, 0xc6, 0x23,
     0x03, 0x00, 0x00, 0x0e, 0x30,   0xff, 0xff, 0x3f, 0x1f, 0x3c,   0xff, 0xff, 0x3f, 0xff, 0x3f,
     0xff, 0xff, 0x3f, 0xff, 0x3f,   0xff, 0xff, 0xff, 0xff, 0x3f,   0xff, 0xff, 0xff, 0xff, 0x3f
-  };
+  };  //启动图案
   u8g.drawXBMP(0, 0, 38, 24, bitmap);
   delay(1000);
 }
 
 void loop() {
-  static data *P_p = new data[6];
-  static bool flag = true;
+  static data *P_p = new data[6];  //修改[]内数字可以调节最大shell数量
+  static bool flag = true;//使得只被执行一次初始化shell[]的属性值
   if (flag)
   {
     for (int i = 0; i < N; i++)
