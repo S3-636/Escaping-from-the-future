@@ -1,2 +1,3 @@
-# Escaping-from-the-future
-A time-killing game
+# 坦克大战
+microduino+C实现，摇杆操作坦克移动，界面美观。唯一美中不足的是没有做复位界面（再来一局页面）。
+这是大一时候主要由李志军同学完成的作品，大佬成功carry全寝室晋级北邮信通院导论课成果展。在这里对他表示感谢。
